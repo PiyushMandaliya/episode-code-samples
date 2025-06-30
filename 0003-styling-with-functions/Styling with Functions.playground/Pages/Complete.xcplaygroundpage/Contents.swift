@@ -58,9 +58,9 @@ let filledButtonStyle =
 let borderButtonStyle =
   roundedButtonStyle
     <> borderStyle(color: .black, width: 2)
-    <> {
-      $0.setTitleColor(.black, for: .normal)
-}
+    <> { (btn: UIButton) in
+      btn.setTitleColor(.black, for: .normal)
+    }
 
 let textButtonStyle =
   baseButtonStyle <> {

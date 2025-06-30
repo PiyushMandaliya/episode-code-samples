@@ -113,11 +113,12 @@ func >=> <A, B, C>(
   ) -> ((A) -> C?) {
 
   return { a in
-    fatalError()
+    let b = f(a)
+    guard let b = b else { return nil }
+    return g(b)
   }
-}
 
-String.init(utf8String:) >=> URL.init(string:)
+//String.init(utf8String:) >=> URL.init(string:)
 
 func >=> <A, B, C>(
   _ f: @escaping (A) -> [B],
@@ -125,7 +126,10 @@ func >=> <A, B, C>(
   ) -> ((A) -> [C]) {
 
   return { a in
-    fatalError()
+    let b: [B] = f(a)
+    
+    let c = b.flatMap(g)
+    return c
   }
 }
 
