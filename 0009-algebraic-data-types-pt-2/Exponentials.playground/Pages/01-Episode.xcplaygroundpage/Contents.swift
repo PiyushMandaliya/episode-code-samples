@@ -294,11 +294,20 @@ pow(a, b + c) == pow(a, b) * pow(a, c)
 // Either<B, C> -> A = (B -> A, C -> A)
 
 func to<A, B, C>(_ f: @escaping (Either<B, C>) -> A) -> ((B) -> A, (C) -> A) {
-  fatalError("exercise for the viewer")
+  let leftValue: (B) -> A = { b in f(.left(b)) }
+  let rightValue: (C) -> A = { c in f(.right(c)) }
+  return (leftValue, rightValue)
 }
 
 func from<A, B, C>(_ f: ((B) -> A, (C) -> A)) -> (Either<B, C>) -> A {
-  fatalError("exercise for the viewer")
+  return { either in
+    switch either {
+    case let .left(b):
+      return f.0(b)
+    case let .right(c):
+      return f.1(c)
+    }
+  }
 }
 
 // (a * b)^c = a^c * b^c
@@ -311,11 +320,15 @@ pow(a * b, c) == pow(a, c) * pow(b, c)
 // (C) -> (A, B) = ((C) -> A, (C) -> B)
 
 func to<A, B, C>(_ f: @escaping (C) -> (A, B)) -> ((C) -> A, (C) -> B) {
-  fatalError("exercise for the viewer")
+  let fa: (C) -> A = { c in f(c).0 }
+  let fb: (C) -> B = { c in f(c).1 }
+  return (fa, fb)
 }
 
 func from<A, B, C>(_ f: ((C) -> A, (C) -> B)) -> (C) -> (A, B) {
-  fatalError("exercise for the viewer")
+  return { c in
+      return (f.0(c), f.1(c))
+  }
 }
 
 // a^(b * c) != a^b * a^c
