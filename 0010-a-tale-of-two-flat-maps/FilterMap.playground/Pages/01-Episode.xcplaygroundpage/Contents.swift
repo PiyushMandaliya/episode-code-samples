@@ -74,6 +74,8 @@ struct User {
 let users = [User(name: "Blob"), User(name: "Math")]
 users
   .map { $0.name }
+
+
 users
   .flatMap { $0.name }
 
