@@ -59,10 +59,15 @@ wrapView(padding: padding) as (UIView) -> AnyObject
 
  If A < B
 
+ Position reversed we called contravariant
+ 
  then B -> C
         <              contravariant
       A -> C
 
+
+ Position preserve we called covariant
+ 
  then      C -> A
              <         covariant
            C -> B
@@ -82,6 +87,8 @@ struct Func<A, B> {
 func map<A, B, C>(_ f: @escaping (B) -> C)
   -> ((Func<A, B>) -> Func<A, C>) {
   return { g in
+    //f // (B) -> C
+    // g.apply // (A) -> B
     Func(apply: g.apply >>> f)
   }
 }
@@ -141,6 +148,9 @@ func map<A, B>(_ f: @escaping (A) -> B) -> (F3<A>) -> F3<B> {
 // B = +1
 // C = -1
 // D = +1
+
+//A, C = contravariant
+//B & D = covariant
 
 
 // Set<A: Hashable, Equatable>
@@ -226,3 +236,45 @@ zs
 zs.map(Trivial.init >>> ^\.value)
 zs.map(Trivial.init).map(^\.value)
 //: [See the next page](@next) for exercises!
+//Covariant
+//"If A is a subtype of B, then Container<A> is a subtype of Container<B>."
+//
+//Example (Swift arrays are covariant):
+//
+class Animal {}
+class Dog: Animal {}
+
+let dogs: [Dog] = []
+let animals: [Animal] = dogs  // ✅ OK: Array is covariant
+
+var anyArray = [Any]()
+var intArray = [Int]()
+
+anyArray.append(contentsOf: [1,3,4,5, "abc"])
+intArray.append(contentsOf: [1,4,5,6,76,7,6])
+
+anyArray.append(intArray) // Covariant
+
+//Complite error
+//intArray.append(contentsOf: anyArray)
+
+
+
+//Contravariant
+//"If A is a subtype of B, then Container<B> is a subtype of Container<A>."
+//
+//This often happens with function inputs.
+//
+//Example (function inputs are contravariant):
+//
+func handleAnimal(_ animal: Animal) {}
+func handleDog(_ dog: Dog) {}
+//
+let f: (Dog) -> Void = handleAnimal  // ✅ OK
+//let g: (Animal) -> Void = handleDog  // ❌ Error
+
+//handleAnimal can handle any Animal, so it’s safe to use it in place of a function that expects a Dog specifically.
+//
+//But handleDog can’t handle just any Animal, so it can’t substitute for a function that expects Animal.
+//
+//So input types of functions are contravariant.
